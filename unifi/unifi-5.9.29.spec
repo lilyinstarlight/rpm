@@ -22,6 +22,9 @@ Requires(postun):   systemd
 UniFi SDN Controller
 
 
+%define __jar_repack %{nil}
+
+
 %prep
 ar p %{SOURCE0} data.tar.xz | tar xJ
 
