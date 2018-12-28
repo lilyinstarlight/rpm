@@ -13,7 +13,7 @@ BuildRoot:          %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -
 %{?systemd_requires}
 BuildRequires:      systemd
 Requires:           mongodb-server
-Requires:           java-1.8.0-openjdk
+Requires:           java-1.8.0-openjdk-headless
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
