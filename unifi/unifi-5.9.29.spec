@@ -1,6 +1,6 @@
 Name:               unifi
 Version:            5.9.29
-Release:            1%{?dist}
+Release:            2%{?dist}
 Summary:            UniFi SDN Controller
 
 License:            Ubiquiti-EULA
