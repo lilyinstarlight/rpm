@@ -42,7 +42,7 @@ ExecStart=%{_bindir}/java -Djava.library.path= -Dorg.xerial.snappy.tempdir=%{_li
 ExecStop=%{_bindir}/java -Djava.library.path= -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar stop
 
 [Install]
-WantedBy=network.target
+WantedBy=multi-user.target
 EOF
 
 %build
