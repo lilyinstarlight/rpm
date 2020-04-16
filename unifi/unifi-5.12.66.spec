@@ -1,25 +1,25 @@
 Name:               unifi
-Version:            5.9.29
-Release:            2%{?dist}
-Summary:            UniFi SDN Controller
+Version:            5.12.66
+Release:            1%{?dist}
+Summary:            UniFi Network Controller
 
 License:            Ubiquiti-EULA
-URL:                https://www.ubnt.com/download/unifi/
-Source0:            https://dl.ubnt.com/%{name}/%{version}/%{name}_sysvinit_all.deb
-ExclusiveArch:      x86_64
+URL:                https://www.ui.com/download/unifi/
+Source0:            https://dl.ui.com/%{name}/%{version}/%{name}_sysvinit_all.deb#/%{name}_sysvinit_all-%{version}.deb
+ExclusiveArch:      x86_64 aarch64
 
 BuildRoot:          %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %{?systemd_requires}
 BuildRequires:      systemd
-Requires:           mongodb-server
+Requires:           mongodb-org-server
 Requires:           java-1.8.0-openjdk-headless
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
 
 %description
-UniFi SDN Controller
+UniFi Network Controller
 
 
 %define __jar_repack %{nil}
@@ -30,7 +30,7 @@ ar p %{SOURCE0} data.tar.xz | tar xJ
 
 cat >%{name}.service <<EOF
 [Unit]
-Description=UniFi Controller
+Description=UniFi Network Controller
 After=network-online.target
 
 [Service]
@@ -38,22 +38,24 @@ Type=simple
 User=unifi
 Group=unifi
 WorkingDirectory=%{_libdir}/%{name}
-ExecStart=%{_bindir}/java -Djava.library.path= -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar start
-ExecStop=%{_bindir}/java -Djava.library.path= -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar stop
+ExecStart=%{_jvmdir}/jre-1.8.0/bin/java -Dunifi.datadir=%{_localstatedir}/lib/%{name} -Dunifi.logdir=%{_localstatedir}/log/%{name} -Dunifi.rundir=%{_localstatedir}/run/%{name} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar start
+ExecStop=%{_jvmdir}/jre-1.8.0/bin/java -Dunifi.datadir=%{_localstatedir}/lib/%{name} -Dunifi.logdir=%{_localstatedir}/log/%{name} -Dunifi.rundir=%{_localstatedir}/run/%{name} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar stop
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 %build
-%{__rm} -r usr/lib/%{name}/lib/native/{Mac,Windows,Linux/aarch64,Linux/armv7}
+%{__rm} -r usr/lib/%{name}/lib/native/{Mac,Windows}
+find usr/lib/%{name}/lib/native/Linux -mindepth 1 -maxdepth 1 -type d | grep -v /%{_arch}'$' | xargs %{__rm} -r
 
 %install
 %{__rm} -r %{buildroot}
 
 %{__mkdir} -p %{buildroot}%{_libdir}/%{name}
-%{__mkdir} -p %{buildroot}%{_localstatedir}/lib/%{name}/{conf,data,run,tmp,work}
+%{__mkdir} -p %{buildroot}%{_localstatedir}/lib/%{name}/{conf,data,tmp,work}
 %{__mkdir} -p %{buildroot}%{_localstatedir}/log/%{name}
+%{__mkdir} -p %{buildroot}%{_localstatedir}/run/%{name}
 %{__mkdir} -p %{buildroot}%{_libdir}/%{name}/bin
 %{__mkdir} -p %{buildroot}%{_unitdir}
 
@@ -61,10 +63,11 @@ EOF
 
 ln -s %{_localstatedir}/lib/%{name}/conf %{buildroot}%{_libdir}/%{name}/conf
 ln -s %{_localstatedir}/lib/%{name}/data %{buildroot}%{_libdir}/%{name}/data
-ln -s %{_localstatedir}/lib/%{name}/run  %{buildroot}%{_libdir}/%{name}/run
 ln -s %{_localstatedir}/lib/%{name}/tmp  %{buildroot}%{_libdir}/%{name}/tmp
 ln -s %{_localstatedir}/lib/%{name}/work %{buildroot}%{_libdir}/%{name}/work
+
 ln -s %{_localstatedir}/log/%{name}      %{buildroot}%{_libdir}/%{name}/logs
+ln -s %{_localstatedir}/run/%{name}      %{buildroot}%{_libdir}/%{name}/run
 
 ln -s %{_bindir}/mongod %{buildroot}%{_libdir}/%{name}/bin/mongod
 %{__cp} %{name}.service %{buildroot}%{_unitdir}
@@ -75,10 +78,10 @@ ln -s %{_bindir}/mongod %{buildroot}%{_libdir}/%{name}/bin/mongod
 %attr(-, root, root)   %{_unitdir}/%{name}.service
 
 %attr(-, unifi, unifi) %{_localstatedir}/log/%{name}
+%attr(-, unifi, unifi) %{_localstatedir}/run/%{name}
 
 %attr(-, unifi, unifi) %config(noreplace) %{_localstatedir}/lib/%{name}/conf
 %attr(-, unifi, unifi) %config(noreplace) %{_localstatedir}/lib/%{name}/data
-%attr(-, unifi, unifi) %config(noreplace) %{_localstatedir}/lib/%{name}/run
 %attr(-, unifi, unifi) %config(noreplace) %{_localstatedir}/lib/%{name}/tmp
 %attr(-, unifi, unifi) %config(noreplace) %{_localstatedir}/lib/%{name}/work
 
