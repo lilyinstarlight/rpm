@@ -1,6 +1,6 @@
 Name:               unifi
-Version:            5.12.66
-Release:            2%{?dist}
+Version:            5.12.72
+Release:            1%{?dist}
 Summary:            UniFi Network Controller
 
 License:            Ubiquiti-EULA
