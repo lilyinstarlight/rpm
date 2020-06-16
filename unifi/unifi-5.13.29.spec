@@ -1,5 +1,5 @@
 Name:               unifi
-Version:            5.12.72
+Version:            5.13.29
 Release:            1%{?dist}
 Summary:            UniFi Network Controller
 
@@ -71,8 +71,8 @@ ln -s %{_sharedstatedir}/%{name}/data %{buildroot}%{_libdir}/%{name}/data
 ln -s %{_sharedstatedir}/%{name}/tmp  %{buildroot}%{_libdir}/%{name}/tmp
 ln -s %{_sharedstatedir}/%{name}/work %{buildroot}%{_libdir}/%{name}/work
 
-ln -s %{_localstatedir}/log/%{name}      %{buildroot}%{_libdir}/%{name}/logs
-ln -s %{_rundir}/%{name}      %{buildroot}%{_libdir}/%{name}/run
+ln -s %{_localstatedir}/log/%{name} %{buildroot}%{_libdir}/%{name}/logs
+ln -s %{_rundir}/%{name} %{buildroot}%{_libdir}/%{name}/run
 
 ln -s %{_bindir}/mongod %{buildroot}%{_libdir}/%{name}/bin/mongod
 %{__cp} %{name}.conf %{buildroot}%{_tmpfilesdir}
