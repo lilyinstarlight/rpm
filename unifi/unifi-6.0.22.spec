@@ -1,11 +1,11 @@
 Name:               unifi
-Version:            5.14.23
+Version:            6.0.22
 Release:            1%{?dist}
 Summary:            UniFi Network Controller
 
 License:            Ubiquiti-EULA
 URL:                https://www.ui.com/download/unifi/
-Source0:            https://dl.ui.com/%{name}/%{version}/%{name}_sysvinit_all.deb#/%{name}_sysvinit_all-%{version}.deb
+Source0:            https://dl.ui.com/%{name}/%{version}/UniFi.unix.zip#/UniFi-%{version}.unix.zip
 ExclusiveArch:      x86_64 aarch64
 
 BuildRoot:          %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -22,11 +22,13 @@ Requires(postun):   systemd
 UniFi Network Controller
 
 
+%global debug_package %{nil}
+
 %define __jar_repack %{nil}
 
 
 %prep
-ar p %{SOURCE0} data.tar.xz | tar xJ
+%setup -q -n UniFi
 
 cat >%{name}.service <<EOF
 [Unit]
@@ -50,8 +52,8 @@ d %{_rundir}/%{name} 0755 unifi unifi -
 EOF
 
 %build
-%{__rm} -r usr/lib/%{name}/lib/native/{Mac,Windows}
-find usr/lib/%{name}/lib/native/Linux -mindepth 1 -maxdepth 1 -type d | grep -v /%{_arch}'$' | xargs %{__rm} -r
+%{__rm} -r lib/native/{Mac,Windows}
+find lib/native/Linux -mindepth 1 -maxdepth 1 -type d | grep -v /%{_arch}'$' | xargs %{__rm} -r
 
 %install
 %{__rm} -r %{buildroot}
@@ -64,7 +66,7 @@ find usr/lib/%{name}/lib/native/Linux -mindepth 1 -maxdepth 1 -type d | grep -v 
 %{__mkdir} -p %{buildroot}%{_tmpfilesdir}
 %{__mkdir} -p %{buildroot}%{_unitdir}
 
-%{__cp} -r usr/lib/%{name}/{dl,lib,webapps} %{buildroot}%{_libdir}/%{name}
+%{__cp} -r dl lib webapps %{buildroot}%{_libdir}/%{name}/
 
 ln -s %{_sharedstatedir}/%{name}/conf %{buildroot}%{_libdir}/%{name}/conf
 ln -s %{_sharedstatedir}/%{name}/data %{buildroot}%{_libdir}/%{name}/data
@@ -75,8 +77,9 @@ ln -s %{_localstatedir}/log/%{name} %{buildroot}%{_libdir}/%{name}/logs
 ln -s %{_rundir}/%{name} %{buildroot}%{_libdir}/%{name}/run
 
 ln -s %{_bindir}/mongod %{buildroot}%{_libdir}/%{name}/bin/mongod
-%{__cp} %{name}.conf %{buildroot}%{_tmpfilesdir}
-%{__cp} %{name}.service %{buildroot}%{_unitdir}
+
+%{__cp} %{name}.conf %{buildroot}%{_tmpfilesdir}/
+%{__cp} %{name}.service %{buildroot}%{_unitdir}/
 
 
 %files
