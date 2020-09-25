@@ -1,5 +1,5 @@
 Name:               unifi
-Version:            6.0.22
+Version:            6.0.23
 Release:            1%{?dist}
 Summary:            UniFi Network Controller
 
@@ -12,6 +12,7 @@ BuildRoot:          %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -
 
 %{?systemd_requires}
 BuildRequires:      systemd
+BuildRequires:      java-1.8.0-openjdk-headless
 Requires:           mongodb-org-server
 Requires:           java-1.8.0-openjdk-headless
 Requires(post):     systemd
