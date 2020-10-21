@@ -1,5 +1,5 @@
 Name:               unifi
-Version:            6.0.23
+Version:            6.0.28
 Release:            1%{?dist}
 Summary:            UniFi Network Controller
 
