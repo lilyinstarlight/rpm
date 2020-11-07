@@ -26,7 +26,9 @@ end_group
 start_group 'Import GPG private key'
 set -x
 
-export GNUPGHOME="$(mktemp -d)"
+GNUPGHOME="$(mktemp -d)"
+export GNUPGHOME
+
 printenv GPG_KEY | base64 -d | gpg --import
 
 { set +x; } 2>/dev/null
