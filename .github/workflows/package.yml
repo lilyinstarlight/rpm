@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     container: centos:8
     steps:
-      - uses: actions/checkout@v2
-
       - name: Install Dependencies
         run: dnf install -y dnf-plugins-core rpmdevtools rpm-sign createrepo
+
+      - uses: actions/checkout@v2
 
       - name: Run .ci/build.sh
         run: .ci/build.sh
@@ -33,6 +33,9 @@ jobs:
         with:
           name: repo
           path: ~/www
+
+      - name: Install Dependencies
+        run: curl https://rclone.org/install.sh | sudo bash
 
       - uses: actions/checkout@v2
 
