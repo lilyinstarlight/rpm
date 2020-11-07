@@ -16,7 +16,7 @@ start_group 'Packaging metadata'
 set -x
 
 pretty="Fooster"
-name="$(echo "$pretty" | tr '[:upper:]' '[:lower:]')"
+name="$(echo "$pretty" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')"
 base="https://file.lily.flowers/rpm"
 signer="Lily Foster (rpm) <lily@lily.flowers>"
 
