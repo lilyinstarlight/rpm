@@ -1,12 +1,9 @@
 name: Package
 
-on:
-  push:
-    branches:
-      - main
+on: push
 
 jobs:
-  package:
+  build:
     name: Package RPMs
     runs-on: ubuntu-latest
     container: centos:8
@@ -21,6 +18,17 @@ jobs:
         env:
           GPG_KEY: ${{ secrets.GPG_KEY }}
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: repo
+          path: ~/www
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    name: Upload repo
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
       - name: Run .ci/deploy.sh
         run: .ci/deploy.sh
         env:

@@ -53,7 +53,7 @@ for spec in "$HOME"/rpmbuild/SPECS/*.spec; do
 	start_group "Build $(basename "$spec")"
 	set -x
 
-	sudo dnf builddep -y "$spec"
+	dnf builddep -y "$spec"
 	spectool -g -R "$spec"
 	rpmbuild -ba "$spec"
 
