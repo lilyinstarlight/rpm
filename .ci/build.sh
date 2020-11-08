@@ -23,24 +23,32 @@ signer="Lily Foster (rpm) <lily@lily.flowers>"
 { set +x; } 2>/dev/null
 end_group
 
-start_group 'Import GPG private key'
-set -x
+if [ -n "$GPG_KEY" ]; then
+  start_group 'Import GPG private key'
+  set -x
 
-GNUPGHOME="$(mktemp -d)"
-export GNUPGHOME
+  GNUPGHOME="$(mktemp -d)"
+  export GNUPGHOME
 
-printenv GPG_KEY | base64 -d | gpg --import
+  printenv GPG_KEY | base64 -d | gpg --import
 
-{ set +x; } 2>/dev/null
-end_group
+  { set +x; } 2>/dev/null
+  end_group
+fi
 
 start_group 'Setup RPM environment'
 set -x
 
 rpmdev-setuptree
-echo "%_gpg_name $signer" >>"$HOME"/.rpmmacros
 
 { set +x; } 2>/dev/null
+
+if [ -n "$GPG_KEY" ]; then
+  set -x
+  echo "%_gpg_name $signer" >>"$HOME"/.rpmmacros
+  { set +x; } 2>/dev/null
+fi
+
 end_group
 
 start_group 'Copy RPM specs'
@@ -63,17 +71,19 @@ for spec in "$HOME"/rpmbuild/SPECS/*.spec; do
 	end_group
 done
 
-start_group 'Sign RPMs'
+if [ -n "$GPG_KEY" ]; then
+  start_group 'Sign RPMs'
 
-for rpm in "$HOME"/rpmbuild/SRPMS/*.rpm "$HOME"/rpmbuild/RPMS/*/*.rpm; do
-	set -x
+  for rpm in "$HOME"/rpmbuild/SRPMS/*.rpm "$HOME"/rpmbuild/RPMS/*/*.rpm; do
+	  set -x
 
-	rpm --addsign "$rpm"
+	  rpm --addsign "$rpm"
 
-	{ set +x; } 2>/dev/null
-done
+	  { set +x; } 2>/dev/null
+  done
 
-end_group
+  end_group
+fi
 
 start_group 'Create src repo'
 set -x
@@ -82,9 +92,15 @@ mkdir -p "$HOME"/www
 
 cp -r "$HOME"/rpmbuild/SRPMS "$HOME"/www/src
 createrepo "$HOME"/www/src
-gpg -u "$signer" --detach-sign --armor "$HOME"/www/src/repodata/repomd.xml
 
 { set +x; } 2>/dev/null
+
+if [ -n "$GPG_KEY" ]; then
+  set -x
+  gpg -u "$signer" --detach-sign --armor "$HOME"/www/src/repodata/repomd.xml
+  { set +x; } 2>/dev/null
+fi
+
 end_group
 
 for archdir in "$HOME"/rpmbuild/RPMS/*; do
@@ -95,24 +111,31 @@ for archdir in "$HOME"/rpmbuild/RPMS/*; do
 
 	cp -r "$HOME"/rpmbuild/RPMS/"$arch" "$HOME"/www/"$arch"
 	createrepo "$HOME"/www/"$arch"
-	gpg -u "$signer" --detach-sign --armor "$HOME"/www/"$arch"/repodata/repomd.xml
 
 	{ set +x; } 2>/dev/null
+
+	if [ -n "$GPG_KEY" ]; then
+	  set -x
+	  gpg -u "$signer" --detach-sign --armor "$HOME"/www/"$arch"/repodata/repomd.xml
+	  { set +x; } 2>/dev/null
+	fi
+
 	end_group
 done
 
-start_group 'Export GPG public key'
-set -x
+if [ -n "$GPG_KEY" ]; then
+  start_group 'Export GPG public key'
+  set -x
 
-gpg --export -a "$signer" >"$HOME"/www/key.asc
+  gpg --export -a "$signer" >"$HOME"/www/key.asc
 
-{ set +x; } 2>/dev/null
-end_group
+  { set +x; } 2>/dev/null
+  end_group
 
-start_group "Create yum repo files"
+  start_group "Create yum repo files"
 
-echo "+ cat >'$HOME/www/$name-src.repo'" >&2
-cat >"$HOME"/www/"$name"-src.repo <<EOF
+  echo "+ cat >'$HOME/www/$name-src.repo'" >&2
+  cat >"$HOME"/www/"$name"-src.repo <<EOF
 [$name-src]
 name=$pretty - Source
 baseurl=$base/src/
@@ -121,8 +144,8 @@ enabled=1
 gpgkey=$base/key.asc
 EOF
 
-echo "+ cat >'$HOME/www/$name.repo'" >&2
-cat >"$HOME"/www/"$name".repo <<EOF
+  echo "+ cat >'$HOME/www/$name.repo'" >&2
+  cat >"$HOME"/www/"$name".repo <<EOF
 [$name]
 name=$pretty
 baseurl=$base/\$basearch/
@@ -131,4 +154,5 @@ enabled=1
 gpgkey=$base/key.asc
 EOF
 
-end_group
+  end_group
+fi
