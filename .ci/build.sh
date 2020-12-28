@@ -60,26 +60,26 @@ find . -type f -name '*.spec' -exec cp '{}' "$HOME"/rpmbuild/SPECS/ ';'
 end_group
 
 for spec in "$HOME"/rpmbuild/SPECS/*.spec; do
-	start_group "Build $(basename "$spec")"
-	set -x
+  start_group "Build $(basename "$spec")"
+  set -x
 
-	dnf builddep -y "$spec"
-	spectool -g -R "$spec"
-	rpmbuild -ba "$spec"
+  dnf builddep -y "$spec"
+  spectool -g -R "$spec"
+  rpmbuild -ba "$spec"
 
-	{ set +x; } 2>/dev/null
-	end_group
+  { set +x; } 2>/dev/null
+  end_group
 done
 
 if [ -n "$GPG_KEY" ]; then
   start_group 'Sign RPMs'
 
   for rpm in "$HOME"/rpmbuild/SRPMS/*.rpm "$HOME"/rpmbuild/RPMS/*/*.rpm; do
-	  set -x
+    set -x
 
-	  rpm --addsign "$rpm"
+    rpm --addsign "$rpm"
 
-	  { set +x; } 2>/dev/null
+    { set +x; } 2>/dev/null
   done
 
   end_group
@@ -104,23 +104,23 @@ fi
 end_group
 
 for archdir in "$HOME"/rpmbuild/RPMS/*; do
-	arch="$(basename "$archdir")"
+  arch="$(basename "$archdir")"
 
-	start_group "Create $arch repo"
-	set -x
+  start_group "Create $arch repo"
+  set -x
 
-	cp -r "$HOME"/rpmbuild/RPMS/"$arch" "$HOME"/www/"$arch"
-	createrepo "$HOME"/www/"$arch"
+  cp -r "$HOME"/rpmbuild/RPMS/"$arch" "$HOME"/www/"$arch"
+  createrepo "$HOME"/www/"$arch"
 
-	{ set +x; } 2>/dev/null
+  { set +x; } 2>/dev/null
 
-	if [ -n "$GPG_KEY" ]; then
-	  set -x
-	  gpg -u "$signer" --detach-sign --armor "$HOME"/www/"$arch"/repodata/repomd.xml
-	  { set +x; } 2>/dev/null
-	fi
+  if [ -n "$GPG_KEY" ]; then
+    set -x
+    gpg -u "$signer" --detach-sign --armor "$HOME"/www/"$arch"/repodata/repomd.xml
+    { set +x; } 2>/dev/null
+  fi
 
-	end_group
+  end_group
 done
 
 if [ -n "$GPG_KEY" ]; then
