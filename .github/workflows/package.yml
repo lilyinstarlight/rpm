@@ -6,7 +6,7 @@ jobs:
   build:
     name: Package RPMs
     runs-on: ubuntu-latest
-    container: centos:8
+    container: registry.access.redhat.com/ubi8/ubi:latest
     steps:
       - name: Install Dependencies
         run: dnf install -y dnf-plugins-core rpmdevtools rpm-sign createrepo
