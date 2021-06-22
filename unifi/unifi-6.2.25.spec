@@ -1,7 +1,7 @@
 Name:               unifi
 Version:            6.2.25
 Release:            1%{?dist}
-Summary:            UniFi Network Controller
+Summary:            UniFi Network Application
 
 License:            Ubiquiti-EULA
 URL:                https://www.ui.com/download/unifi/
@@ -20,7 +20,7 @@ Requires(preun):    systemd
 Requires(postun):   systemd
 
 %description
-UniFi Network Controller
+UniFi Network Application
 
 
 %global debug_package %{nil}
@@ -33,7 +33,7 @@ UniFi Network Controller
 
 cat >%{name}.service <<EOF
 [Unit]
-Description=UniFi Network Controller
+Description=UniFi Network Application
 After=network-online.target
 
 [Service]
