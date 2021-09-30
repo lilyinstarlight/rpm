@@ -20,7 +20,7 @@ Requires(preun):    systemd
 Requires(postun):   systemd
 
 %description
-UniFi Network Application
+A centralized management system for UniFi suite of devices
 
 
 %global debug_package %{nil}
@@ -48,13 +48,25 @@ ExecStop=%{_jvmdir}/jre-1.8.0/bin/java -Dunifi.datadir=%{_sharedstatedir}/%{name
 WantedBy=multi-user.target
 EOF
 
-cat >%{name}.conf <<EOF
+cat >%{name}-tmpfiles.conf <<EOF
 d %{_rundir}/%{name} 0755 unifi unifi -
+EOF
+
+cat >%{name}-logrotate <<EOF
+%{_localstatedir}/log/%{name}/*.log {
+    missingok
+    notifempty
+    copytruncate
+    compress
+    delaycompress
+}
 EOF
 
 %build
 %{__rm} -r lib/native/{Mac,Windows}
 find lib/native/Linux -mindepth 1 -maxdepth 1 -type d | grep -v /%{_arch}'$' | xargs %{__rm} -r
+
+find lib/native -type f -name '*.so' -exec chmod 0755 '{}' ';'
 
 %install
 %{__rm} -r %{buildroot}
@@ -79,17 +91,23 @@ ln -s %{_rundir}/%{name} %{buildroot}%{_libdir}/%{name}/run
 
 ln -s %{_bindir}/mongod %{buildroot}%{_libdir}/%{name}/bin/mongod
 
-%{__cp} %{name}.conf %{buildroot}%{_tmpfilesdir}/
-%{__cp} %{name}.service %{buildroot}%{_unitdir}/
+%{__cp} %{name}-tmpfiles.conf %{buildroot}%{_tmpfilesdir}/%{name}.conf
+%{__cp} %{name}.service %{buildroot}%{_unitdir}/%{name}.service
+
+%{__mkdir} -p %{buildroot}%{_sysconfdir}/logrotate.d
+%{__cp} %{name}-logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 
 
 %files
 %attr(-, root, root)   %{_libdir}/%{name}
+
 %attr(-, root, root)   %{_tmpfilesdir}/%{name}.conf
 %attr(-, root, root)   %{_unitdir}/%{name}.service
 
+%attr(-, root, root)   %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+
 %attr(-, unifi, unifi) %{_localstatedir}/log/%{name}
-%attr(-, unifi, unifi) %{_rundir}/%{name}
+%attr(-, unifi, unifi) %ghost %{_rundir}/%{name}
 
 %attr(-, unifi, unifi) %config(noreplace) %{_sharedstatedir}/%{name}/conf
 %attr(-, unifi, unifi) %config(noreplace) %{_sharedstatedir}/%{name}/data
@@ -114,3 +132,5 @@ getent passwd %{name} > /dev/null || useradd -r -g %{name} %{name} -s /sbin/nolo
 
 
 %changelog
+* Wed Sep 29 2021 Lily Foster <lily@lily.flowers> - 6.4.54-1
+- Update to follow RPM best practices
