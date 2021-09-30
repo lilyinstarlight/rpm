@@ -3,7 +3,8 @@ name: Package
 on: push
 
 jobs:
-  lint: Lint RPMs
+  lint:
+    name: Lint RPMs
     runs-on: ubuntu-latest
     container: centos:8
     steps:
