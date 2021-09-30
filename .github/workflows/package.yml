@@ -3,8 +3,20 @@ name: Package
 on: push
 
 jobs:
+  lint: Lint RPMs
+    runs-on: ubuntu-latest
+    container: centos:8
+    steps:
+      - name: Install Dependencies
+        run: dnf install -y dnf-plugins-core rpmdevtools rpmlint
+
+      - uses: actions/checkout@v2
+
+      - name: Run .ci/lint.sh
+        run: .ci/lint.sh
+
   build:
-    name: Package RPMs
+    name: Build repo
     runs-on: ubuntu-latest
     container: centos:8
     steps:
