@@ -28,6 +28,14 @@ find . -type f -name '*.spec' -exec cp '{}' "$HOME"/rpmbuild/SPECS/ ';'
 { set +x; } 2>/dev/null
 end_group
 
+start_group 'Copy RPM sources'
+set -x
+
+find . -mindepth 2 -type f '(' -not -name '*.spec' -a -not -name 'README.md' -a -not -path './.*' ')' -exec cp '{}' "$HOME"/rpmbuild/SOURCES/ ';'
+
+{ set +x; } 2>/dev/null
+end_group
+
 for spec in "$HOME"/rpmbuild/SPECS/*.spec; do
   start_group "Build $(basename "$spec")"
   set -x
