@@ -1,7 +1,7 @@
 %global bootstrap 0
 
 Name:           python-pymongo
-Version:        3.10.1
+Version:        4.1.1
 Release:        1%{?dist}
 
 # All code is ASL 2.0 except bson/time64*.{c,h} which is MIT
@@ -9,10 +9,6 @@ License:        ASL 2.0 and MIT
 Summary:        Python driver for MongoDB
 URL:            https://www.mongodb.com/docs/drivers/pymongo
 Source0:        https://github.com/mongodb/mongo-python-driver/archive/%{version}/pymongo-%{version}.tar.gz
-# This patch removes the bundled ssl.match_hostname library as it was vulnerable to CVE-2013-7440
-# and CVE-2013-2099, and wasn't needed anyway since Fedora >= 22 has the needed module in the Python
-# standard library. It also adjusts imports so that they exclusively use the code from Python.
-Patch01:        0001-Use-ssl.match_hostname-from-the-Python-stdlib.patch
 
 BuildRequires: make
 BuildRequires:  gcc
@@ -67,12 +63,6 @@ contains the python3 version of this module.
 
 %prep
 %setup -q -n mongo-python-driver-%{version}
-%patch01 -p1 -b .ssl
-
-# Remove the bundled ssl.match_hostname library as it was vulnerable to CVE-2013-7440
-# and CVE-2013-2099, and isn't needed anyway since Fedora >= 22 has the needed module in the Python
-# standard library.
-rm pymongo/ssl_match_hostname.py
 
 
 %build
@@ -119,5 +109,5 @@ chmod 755 %{buildroot}%{python3_sitearch}/pymongo/*.so
 
 
 %changelog
-* Thu Jul 07 2022 Lily Foster <lily@lily.flowers> - 3.10.1-1
-- Import from Fedora
+* Thu Jul 07 2022 Lily Foster <lily@lily.flowers> - 4.1.1-1
+- Import from Fedora and bump to 4.1.1
