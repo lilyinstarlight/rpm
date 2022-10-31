@@ -1,5 +1,5 @@
 Name:               unifi
-Version:            7.2.94
+Version:            7.2.95
 Release:            1%{?dist}
 Summary:            UniFi Network Application
 
