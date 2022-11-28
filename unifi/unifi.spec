@@ -1,5 +1,5 @@
 Name:               unifi
-Version:            7.2.95
+Version:            7.3.76
 Release:            1%{?dist}
 Summary:            UniFi Network Application
 
@@ -12,15 +12,15 @@ BuildRoot:          %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -
 
 %{?systemd_requires}
 BuildRequires:      systemd
-BuildRequires:      java-1.8.0-openjdk-headless
+BuildRequires:      java-11-openjdk-headless
 Requires:           mongodb-org-server
-Requires:           java-1.8.0-openjdk-headless
+Requires:           java-11-openjdk-headless
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
 
 %description
-A centralized management system for UniFi suite of devices
+A centralized management system for the UniFi suite of devices
 
 
 %global debug_package %{nil}
@@ -41,8 +41,8 @@ Type=simple
 User=unifi
 Group=unifi
 WorkingDirectory=%{_libdir}/%{name}
-ExecStart=%{_jvmdir}/jre-1.8.0/bin/java -Dunifi.datadir=%{_sharedstatedir}/%{name} -Dunifi.logdir=%{_localstatedir}/log/%{name} -Dunifi.rundir=%{_rundir}/%{name} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar start
-ExecStop=%{_jvmdir}/jre-1.8.0/bin/java -Dunifi.datadir=%{_sharedstatedir}/%{name} -Dunifi.logdir=%{_localstatedir}/log/%{name} -Dunifi.rundir=%{_rundir}/%{name} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar stop
+ExecStart=%{_jvmdir}/jre-11/bin/java -Dunifi.datadir=%{_sharedstatedir}/%{name} -Dunifi.logdir=%{_localstatedir}/log/%{name} -Dunifi.rundir=%{_rundir}/%{name} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar start
+ExecStop=%{_jvmdir}/jre-11/bin/java -Dunifi.datadir=%{_sharedstatedir}/%{name} -Dunifi.logdir=%{_localstatedir}/log/%{name} -Dunifi.rundir=%{_rundir}/%{name} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dorg.xerial.snappy.tempdir=%{_libdir}/%{name}/tmp -jar %{_libdir}/%{name}/lib/ace.jar stop
 
 [Install]
 WantedBy=multi-user.target
@@ -132,5 +132,8 @@ getent passwd %{name} > /dev/null || useradd -r -g %{name} %{name} -s /sbin/nolo
 
 
 %changelog
+* Sat Nov 26 2022 Lily Foster <lily@lily.flowers> - 7.3.76-1
+- Bump to JRE 11
+
 * Wed Sep 29 2021 Lily Foster <lily@lily.flowers> - 6.4.54-1
 - Update to follow RPM best practices
