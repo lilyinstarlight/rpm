@@ -19,6 +19,8 @@ Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
 
+Recommends:         logrotate
+
 %description
 A centralized management system for the UniFi suite of devices
 
