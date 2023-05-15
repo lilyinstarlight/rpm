@@ -6,7 +6,7 @@ jobs:
   lint:
     name: Lint RPMs
     runs-on: ubuntu-latest
-    container: almalinux:8
+    container: almalinux:9
     steps:
       - name: Install Dependencies
         run: dnf install -y dnf-plugins-core rpmdevtools rpmlint
@@ -19,7 +19,7 @@ jobs:
   build:
     name: Build repo
     runs-on: ubuntu-latest
-    container: almalinux:8
+    container: almalinux:9
     steps:
       - name: Install Dependencies
         run: dnf install -y dnf-plugins-core rpmdevtools rpm-sign createrepo
