@@ -65,7 +65,6 @@ cat >%{name}-logrotate <<EOF
 EOF
 
 %build
-%{__rm} -r lib/native/{Mac,Windows}
 find lib/native/Linux -mindepth 1 -maxdepth 1 -type d | grep -v /%{_arch}'$' | xargs %{__rm} -r
 
 find lib/native -type f -name '*.so' -exec chmod 0755 '{}' ';'
@@ -134,6 +133,9 @@ getent passwd %{name} > /dev/null || useradd -r -g %{name} %{name} -s /sbin/nolo
 
 
 %changelog
+* Thu Jun 01 2023 Lily Foster <lily@lily.flowers> - 7.4.156-1
+- Remove non-Linux native pruning code
+
 * Sat Nov 26 2022 Lily Foster <lily@lily.flowers> - 7.3.76-1
 - Bump to JRE 11
 
