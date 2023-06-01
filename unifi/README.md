@@ -8,5 +8,5 @@ Requires the [mongodb-org-3.6](https://docs.mongodb.com/v3.6/tutorial/install-mo
 Downloads
 ---------
 
-* [unifi-7.3.83-1.el9.x86\_64.rpm](https://file.lily.flowers/rpm/x86_64/unifi-7.3.83-1.el9.x86_64.rpm)
-* [unifi-7.3.83-1.el9.src.rpm](https://file.lily.flowers/rpm/src/unifi-7.3.83-1.el9.src.rpm)
+* [unifi-7.4.156-1.el9.x86\_64.rpm](https://file.lily.flowers/rpm/x86_64/unifi-7.4.156-1.el9.x86_64.rpm)
+* [unifi-7.4.156-1.el9.src.rpm](https://file.lily.flowers/rpm/src/unifi-7.4.156-1.el9.src.rpm)
