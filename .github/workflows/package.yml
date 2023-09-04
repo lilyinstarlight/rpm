@@ -11,7 +11,7 @@ jobs:
       - name: Install Dependencies
         run: dnf install -y dnf-plugins-core rpmdevtools rpmlint
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run .ci/lint.sh
         run: .ci/lint.sh
@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: dnf install -y dnf-plugins-core rpmdevtools rpm-sign createrepo
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run .ci/build.sh
         run: .ci/build.sh
@@ -50,7 +50,7 @@ jobs:
           name: repo
           path: ~/www
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run .ci/deploy.sh
         run: .ci/deploy.sh
